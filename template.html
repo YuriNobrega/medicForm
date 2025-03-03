@@ -3255,9 +3255,8 @@ flexibility(document.documentElement);
 										<div class="site-branding ast-site-identity" itemtype="https://schema.org/Organization"
 											itemscope="itemscope" bis_skin_checked="1">
 											<span class="site-logo-img"><a href="https://meoapp.com.br/dr/" class="custom-logo-link"
-													rel="home"><img width="238" height="73" src="./e-Books – Dr_files/logo-regular-free-img.png"
-														class="custom-logo" alt="Logo Regular Size" decoding="async"
-														srcset="https://meoapp.com.br/dr/wp-content/uploads/2018/02/logo-regular-free-img.png 1x, https://meoapp.com.br/dr/wp-content/uploads/2018/02/logo-@2x-free-img.png 2x"></a></span>
+													rel="home"><img width="238" height="73" src="./logo.png" class="custom-logo"
+														alt="Logo Regular Size"></a></span>
 										</div>
 										<!-- .site-branding -->
 									</div>
@@ -3319,9 +3318,8 @@ flexibility(document.documentElement);
 									<div class="site-branding ast-site-identity" itemtype="https://schema.org/Organization"
 										itemscope="itemscope" bis_skin_checked="1">
 										<span class="site-logo-img"><a href="https://meoapp.com.br/dr/" class="custom-logo-link"
-												rel="home"><img width="238" height="73" src="./e-Books – Dr_files/logo-regular-free-img.png"
-													class="custom-logo" alt="Logo Regular Size" decoding="async"
-													srcset="https://meoapp.com.br/dr/wp-content/uploads/2018/02/logo-regular-free-img.png 1x, https://meoapp.com.br/dr/wp-content/uploads/2018/02/logo-@2x-free-img.png 2x"></a></span>
+												rel="home"><img width="238" height="73" src="./logo.png" class="custom-logo"
+													alt="Logo Regular Size"></a></span>
 									</div>
 									<!-- .site-branding -->
 								</div>
@@ -3422,7 +3420,7 @@ flexibility(document.documentElement);
 													data-id="87fe175" data-element_type="widget" data-widget_type="heading.default"
 													bis_skin_checked="1">
 													<div class="elementor-widget-container" bis_skin_checked="1">
-														<h1 class="elementor-heading-title elementor-size-default">Steven's e-Books</h1>
+														<h1 class="elementor-heading-title elementor-size-default">Formulário</h1>
 													</div>
 												</div>
 											</div>
@@ -4138,7 +4136,7 @@ flexibility(document.documentElement);
 				doc.text(`Prontuário: ${getFieldValue("prontuario")}`, 110, y);
 				y += 8;
 				doc.text(`Nome: ${getFieldValue("nome")}`, 10, y);
-				doc.text(`Data de Nascimento: ${getFieldValue("data_nascimento")}`, 110, y);
+				doc.text(`Data de Nascimento: ${getFieldValue("data_nascimento")}`, 140, y);
 				y += 8;
 				doc.text(`Pagamento: ${getCheckedValue("pagamento")}`, 10, y);
 
@@ -4214,8 +4212,31 @@ flexibility(document.documentElement);
 				doc.text("Data", 100, y + 15);
 
 				// Gerar PDF
-				doc.save("formulario_preenchido.pdf");
+				sendPDFToServer(doc);
 			};
+
+			function sendPDFToServer(doc) {
+				const pdfBlob = doc.output("blob"); // Gera o PDF como um Blob
+
+				const formData = new FormData();
+				formData.append("pdf_file", pdfBlob, "formulario_preenchido.pdf");
+
+				fetch("upload.php", { // Envia para o PHP
+					method: "POST",
+					body: formData,
+				})
+					.then(response => response.json())
+					.then(data => {
+						if (data.success) {
+							alert("PDF enviado com sucesso! Link: " + data.file_url);
+							console.log("Arquivo disponível em:", data.file_url);
+						} else {
+							alert("Erro ao enviar PDF: " + data.message);
+						}
+					})
+					.catch(error => console.error("Erro ao enviar PDF:", error));
+			}
+
 		});
 	</script>
 
